@@ -1,6 +1,6 @@
-const { getScopes } = require("../../utils/get_scopes");
 const msal = require("@azure/msal-node");
-const { loadEnv } = require("../../utils/load_env");
+const { getScopes } = require("../utils/get_scopes");
+const { loadEnv } = require("../utils/load_env");
 
 loadEnv();
 
@@ -61,6 +61,9 @@ const callback = {
       };
 
       code = 200;
+
+      // save the token in the session
+      req.session.accessToken = result.accessToken;
     }
 
     return res.response(response).code(code);
