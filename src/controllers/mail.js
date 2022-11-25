@@ -46,6 +46,60 @@ const getAll = {
   },
 };
 
+const getAllSender = {
+  method: "GET",
+  path: "/mail/getAllSender",
+  handler: async (req, res) => {
+    const accessToken = req.session.accessToken;
+
+    let response = null;
+    let code = null;
+
+    const { sender } = req.query;
+
+    const responseApi = await axios.get(
+      process.env.BASE_URL +
+        `/me/messages?$filter=from/emailAddress/address eq '${sender}'`,
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    );
+
+    if (responseApi.status !== 200 && responseApi.status !== 401) {
+      response = {
+        status: "error",
+        message: "Error getting messages",
+        data: response.data,
+      };
+
+      code = 500;
+
+      return res.response(response).code(code);
+    } else if (responseApi.status === 401) {
+      response = {
+        status: "error",
+        message: "Unauthorized",
+      };
+
+      code = 401;
+
+      return res.response(response).code(code);
+    } else {
+      response = {
+        status: "success",
+        data: responseApi.data,
+      };
+
+      code = 200;
+    }
+
+    return res.response(response).code(code);
+  },
+};
+
 module.exports = {
   getAll,
+  getAllSender,
 };

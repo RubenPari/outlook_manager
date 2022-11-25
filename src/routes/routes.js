@@ -1,5 +1,5 @@
 const { login, callback } = require("../controllers/auth");
-const { getAll } = require("../controllers/mail");
+const { getAll, getAllSender } = require("../controllers/mail");
 
 function setUpRoutes(server) {
   /* Auth */
@@ -8,6 +8,7 @@ function setUpRoutes(server) {
 
   /* Mail */
   server.route(getAll);
+  server.route(getAllSender);
 
   return server;
 }
