@@ -1,5 +1,6 @@
 const { loadEnv } = require("../utils/load_env");
 const axios = require("axios");
+const { deleteMessageById } = require("../client/delete_message");
 
 loadEnv();
 
@@ -141,20 +142,10 @@ const deleteAllSender = {
 
     const messages = responseApi.data.value;
 
-    // TODO: make func
     for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
+      const codeSingle = await deleteMessageById(accessToken);
 
-      const responseDelete = await axios.delete(
-        process.env.BASE_URL + `/me/messages/${message.id}`,
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-
-      if (responseDelete.status !== 204) {
+      if (codeSingle !== 204) {
         response = {
           status: "error",
           message:
@@ -165,17 +156,19 @@ const deleteAllSender = {
         };
 
         code = 500;
+
+        break;
       }
-
-      response = {
-        status: "success",
-        message: "Messages deleted",
-      };
-
-      code = 200;
-
-      return res.response(response).code(code);
     }
+
+    response = {
+      status: "success",
+      message: "Messages deleted",
+    };
+
+    code = 200;
+
+    return res.response(response).code(code);
   },
 };
 
